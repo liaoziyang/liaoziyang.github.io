@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="ja">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-3327028829106990",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+  <meta name="description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+<meta name="keywords" content="freee,slack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="人事労務freeeとSlackを連携させるためにやったこと">
+<meta property="og:url" content="https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/index.html">
+<meta property="og:site_name" content="liaoziyang&#39;s blog">
+<meta property="og:description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+<meta property="og:locale" content="ja">
+<meta property="og:image" content="https://liaoziyang.github.io/images/freee_slack.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_auth_window.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_slash_command.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_edit_command.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_dakoku_command.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_app_approved.png">
+<meta property="og:image" content="https://liaoziyang.github.io/images/slack_app_live.png">
+<meta property="og:updated_time" content="2018-12-07T07:15:51.066Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="人事労務freeeとSlackを連携させるためにやったこと">
+<meta name="twitter:description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+<meta name="twitter:image" content="https://liaoziyang.github.io/images/freee_slack.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>人事労務freeeとSlackを連携させるためにやったこと | liaoziyang's blog</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118581636-4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-118581636-4');
+</script>
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="ja">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">liaoziyang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="ナビゲーションバーの切り替え">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>ホーム</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>アーカイブ</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ziyang Liao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="liaoziyang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">人事労務freeeとSlackを連携させるためにやったこと
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">投稿日</span>
+              
+
+              
+                
+              
+
+              <time title="建てられる：2018-12-08 11:26:34" itemprop="dateCreated datePublished" datetime="2018-12-08T11:26:34+09:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">に編集されました</span>
+                
+                <time title="修正する：2018-12-07 16:15:51" itemprop="dateModified" datetime="2018-12-07T16:15:51+09:00">2018-12-07</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/#comments" itemprop="discussionUrl">
+                
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>この記事は<a href="https://adventar.org/calendars/3140" target="_blank" rel="noopener">裏freee developers Advent Calendar 2018</a>の8日目です。今年の10月から新卒で入社した<a href="https://github.com/liaoziyang" target="_blank" rel="noopener">@liaoziyang</a>と申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。</p>
+<p>freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当することになりました。今回は人事労務freeeとSlackを連携させるためにやったことをお話します。</p>
+<h1 id="今回作ったもの"><a href="#今回作ったもの" class="headerlink" title="今回作ったもの"></a>今回作ったもの</h1><p><img src="/images/freee_slack.png" alt="freee hr slack app"></p>
+<p>ざっくり機能を説明するとこんな感じです。</p>
+<ul>
+<li>勤怠打刻</li>
+<li>指定月の勤怠サマリを確認</li>
+<li>通知の受け取り(給与明細、年末調整)</li>
+</ul>
+<h1 id="開発環境の構築"><a href="#開発環境の構築" class="headerlink" title="開発環境の構築"></a>開発環境の構築</h1><p>ざっくり流れとしては、Slackアプリケーションを作る→外部公開用の設定をする→Oauthの認証を行うためのコードを書くになっています。<br>まずSlackからメッセージを受信するためには、ローカル環境に構築したアプリケーションに対して外部(Slack)からhttpsリクエストを受け付けられるようにする必要がありますが、<code>ngrok</code>を使えば簡単にできます。詳細な手順はこちらです。<br><a href="https://api.slack.com/tutorials/tunneling-with-ngrok" target="_blank" rel="noopener">https://api.slack.com/tutorials/tunneling-with-ngrok</a></p>
+<h1 id="外部に公開するためのSlack-Appを作る手順"><a href="#外部に公開するためのSlack-Appを作る手順" class="headerlink" title="外部に公開するためのSlack Appを作る手順"></a>外部に公開するためのSlack Appを作る手順</h1><p>社内や自分のSlack WorkSpaceにHubotなどを使ってBotを追加することはよくあると思いますが、この場合は<code>Bot OAuth Access Token</code>を取得し、設定に入れれば動かせることができます。</p>
+<p>一般公開するためのSlack APPはこちらの<a href="https://api.slack.com/slack-apps" target="_blank" rel="noopener">公式ドキュメント</a>に従って作る必要があります。</p>
+<h2 id="Slack-App設定画面の設定"><a href="#Slack-App設定画面の設定" class="headerlink" title="Slack App設定画面の設定"></a>Slack App設定画面の設定</h2><p><code>Create New App</code>をクリックして、名前と開発用のSlack WorkSpaceを設定した後に、Slack Appの設定画面に入ります。いろんな項目がありますが、最低限必要なものは</p>
+<ul>
+<li>使う機能の設定</li>
+<li>OAuthのリダイレクトURL</li>
+<li>必要とする権限の設定</li>
+</ul>
+<p>になります。</p>
+<h2 id="OAuth認証"><a href="#OAuth認証" class="headerlink" title="OAuth認証"></a>OAuth認証</h2><p><a href="https://api.slack.com/docs/oauth" target="_blank" rel="noopener">本家のドキュメント</a>に書いてあるように、まずはユーザに対して、Slackと自分が作ったアプリケーションが連携することを承認(許可)してもらう必要があります。</p>
+<p><code>https://slack.com/oauth/authorize</code>に対して、<code>GET</code>で</p>
+<ul>
+<li>client_id - アプリの作成時に発行されます（必須）</li>
+<li>scope - 要求する権限（下記参照）（必須）</li>
+<li>redirect_uri - リダイレクト先のURL（下記参照）（オプション）</li>
+<li>state - 完了時に戻される一意の文字列（オプション）</li>
+<li>team - 連携できるWorkspaceを指定する（オプション）</li>
+</ul>
+<p>を渡します。</p>
+<p>Railsで動的にURLを生成するならこのようになります。</p>
+<figure class="highlight rb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">activate</span></span></span><br><span class="line">  oauth_state = Slack::GenerateOauthStateService.new(<span class="symbol">company:</span> current_company).execute</span><br><span class="line">  uri = URI(<span class="string">'https://slack.com/oauth/authorize'</span>)</span><br><span class="line">  uri.query = &#123;</span><br><span class="line">    <span class="symbol">client_id:</span> SLACK_CLIENT_ID,</span><br><span class="line">    <span class="symbol">scope:</span> <span class="string">'bot,users:read.email,commands,users:read'</span>,</span><br><span class="line">    <span class="symbol">state:</span> oauth_state,</span><br><span class="line">  &#125;.to_query</span><br><span class="line"></span><br><span class="line">  redirect_to uri.to_s</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>生成したリンクにアクセスするとSlackの認証画面が表示され、<code>scope</code>に応じた権限の承認を求められます。ユーザーが承認すると、設定した<code>redirect_uri</code>に対してアクセストークンの認証コードと共にリダイレクトされます。</p>
+<p><img src="/images/slack_auth_window.png" alt="slack auth window"></p>
+<p>アクセストークンの認証コードを手に入れたら、認証コードを使ってアクセストークンと交換することができます。<br><a href="https://github.com/slack-ruby/slack-ruby-client" target="_blank" rel="noopener">slack-ruby-client</a>を使えば簡単にSlack APIを叩くことができます。</p>
+<figure class="highlight rb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">client = Slack::Web::Client.new</span><br><span class="line">response = client.oauth_access(&#123;</span><br><span class="line">  <span class="symbol">client_id:</span> SLACK_CLIENT_ID,</span><br><span class="line">  <span class="symbol">client_secret:</span> SLACK_CLIENT_SECRET,</span><br><span class="line">  <span class="symbol">code:</span> oauth_params[<span class="symbol">:code</span>]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>帰ってきた<code>response</code>にはこのように<code>access_token</code>が含まれているので、<code>access_token</code>を使ってSlack APIを叩いていろんな情報を取ることができるようになりました。</p>
+<h1 id="勤怠打刻コマンドを作る"><a href="#勤怠打刻コマンドを作る" class="headerlink" title="勤怠打刻コマンドを作る"></a>勤怠打刻コマンドを作る</h1><p>機能はいくつかありますが、ここでは打刻コマンドの実装のみを説明します。</p>
+<h2 id="初期設定"><a href="#初期設定" class="headerlink" title="初期設定"></a>初期設定</h2><p>Slackメッセージ入力欄に<code>/</code>を打つことでSlash Commandを使うことができます。この機能を使って打刻コマンドを作ります。<br><a href="https://api.slack.com/slash-commands" target="_blank" rel="noopener">https://api.slack.com/slash-commands</a></p>
+<p><img src="/images/slack_slash_command.png" alt="slack slash command"></p>
+<p>Slash Commandは以下のようにSlack設定画面で設定することができます。設定したCommandが使われたら、自分で設定した<code>Request URL</code>に情報が送信されます。</p>
+<p><img src="/images/slack_edit_command.png" alt="slack edit command"></p>
+<h2 id="打刻メッセージを返す"><a href="#打刻メッセージを返す" class="headerlink" title="打刻メッセージを返す"></a>打刻メッセージを返す</h2><p>Slackユーザーが打刻コマンドを打ったら、そのユーザーの現時点の打刻状況に応じて、打刻メッセージを返す必要があります。例えばまだ出勤していなかったら「出勤ボタン」を表示し、既に出勤していたら「休憩開始ボタン」と「退勤ボタン」を表示します。</p>
+<p>Slackのメッセージの組み立て方がここに書いてありますので、これに従って打刻メッセージを作ってユーザーに返せば、打刻ボタンが含まれたメッセージが表示されます。<br><a href="https://api.slack.com/docs/message-attachments" target="_blank" rel="noopener">https://api.slack.com/docs/message-attachments</a></p>
+<p>実際の打刻の流れは、このように<code>/freee_dakoku</code>を送信することで、出勤ボタンが表示されて、そのボタンを押せば出勤できましたっという感じになっています。<br><img src="/images/slack_dakoku_command.png" alt="slack dakoku command"></p>
+<h2 id="打刻ボタンを押されたら打刻する"><a href="#打刻ボタンを押されたら打刻する" class="headerlink" title="打刻ボタンを押されたら打刻する"></a>打刻ボタンを押されたら打刻する</h2><p>出勤などの処理は上記のメッセージにあるボタンを通してやっていて、Slackでは<code>interactive message</code>と呼んでいます。ボタンを押すと事前に設定したURLにリクエストがPOSTされ、リクエスト内容は以下のjsonのようになっており、パラメータにある<code>response_url</code>に対して、ボタンを押した後に表示したい内容を返すことによって、打刻処理の結果をユーザーに通知することができます。<br><a href="https://api.slack.com/interactive-messages" target="_blank" rel="noopener">https://api.slack.com/interactive-messages</a></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"type"</span>: <span class="string">"interactive_message"</span>,</span><br><span class="line">  <span class="attr">"actions"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"name"</span>: <span class="string">"channel_list"</span>,</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"select"</span>,</span><br><span class="line">      <span class="attr">"selected_options"</span>:[</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">"value"</span>: <span class="string">"C24BTKDQW"</span></span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"callback_id"</span>: <span class="string">"pick_channel_for_fun"</span>,</span><br><span class="line">  <span class="attr">"team"</span>: &#123;</span><br><span class="line">    <span class="attr">"id"</span>: <span class="string">"T1ABCD2E12"</span>,</span><br><span class="line">    <span class="attr">"domain"</span>: <span class="string">"hooli-hq"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"channel"</span>: &#123;</span><br><span class="line">    <span class="attr">"id"</span>: <span class="string">"C9C2VHR7D"</span>,</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"triage-random"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"user"</span>: &#123;</span><br><span class="line">    <span class="attr">"id"</span>: <span class="string">"U900MV5U7"</span>,</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"gbelson"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"action_ts"</span>: <span class="string">"1520966872.245369"</span>,</span><br><span class="line">  <span class="attr">"message_ts"</span>: <span class="string">"1520965348.000538"</span>,</span><br><span class="line">  <span class="attr">"attachment_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"token"</span>: <span class="string">"lbAZE0ckwoSNJcsGWE7sqX5j"</span>,</span><br><span class="line">  <span class="attr">"is_app_unfurl"</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="attr">"original_message"</span>: &#123;</span><br><span class="line">    <span class="attr">"text"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="attr">"username"</span>: <span class="string">"Belson Bot"</span>,</span><br><span class="line">    <span class="attr">"bot_id"</span>: <span class="string">"B9DKHFZ1E"</span>,</span><br><span class="line">    <span class="attr">"attachments"</span>:[</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"callback_id"</span>: <span class="string">"pick_channel_for_fun"</span>,</span><br><span class="line">        <span class="attr">"text"</span>: <span class="string">"Choose a channel"</span>,</span><br><span class="line">        <span class="attr">"id"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"color"</span>: <span class="string">"2b72cb"</span>,</span><br><span class="line">        <span class="attr">"actions"</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">"id"</span>: <span class="string">"1"</span>,</span><br><span class="line">            <span class="attr">"name"</span>: <span class="string">"channel_list"</span>,</span><br><span class="line">            <span class="attr">"text"</span>: <span class="string">"Public channels"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"select"</span>,</span><br><span class="line">            <span class="attr">"data_source"</span>: <span class="string">"channels"</span></span><br><span class="line">          &#125;</span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">"fallback"</span>:<span class="string">"Choose a channel"</span></span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"message"</span>,</span><br><span class="line">    <span class="attr">"subtype"</span>: <span class="string">"bot_message"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="string">"1520965348.000538"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"response_url"</span>: <span class="string">"https://hooks.slack.com/actions/T1ABCD2E12/330361579271/0dAEyLY19ofpLwxqozy3firz"</span>,</span><br><span class="line">  <span class="attr">"trigger_id"</span>: <span class="string">"328654886736.72393107734.9a0f78bccc3c64093f4b12fe82ccd51e"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Slack-Appを公開する"><a href="#Slack-Appを公開する" class="headerlink" title="Slack Appを公開する"></a>Slack Appを公開する</h1><p>公開する準備ができたら、Slackに審査を出します。<br>審査のチェックリストに従って準備を行う必要があります。<a href="https://api.slack.com/docs/slack-apps-checklist" target="_blank" rel="noopener">https://api.slack.com/docs/slack-apps-checklist</a><br>とくに、以下の二点は注意が必要です。</p>
+<ul>
+<li>プライバシーポリシーの英語版</li>
+<li>Permissionsのscopeの必要な理由をきちんと書く</li>
+</ul>
+<p>Slack側が審査が終え、作ったアプリがApprovedされました！この状態ではまだ審査通っただけなので、また一般公開されません。</p>
+<p><img src="/images/slack_app_approved.png" alt="slack app approved"></p>
+<p>Publishボタンを押したら、Slack App Directoryに一般公開されます。</p>
+<p><img src="/images/slack_app_live.png" alt="slack app live"></p>
+<h1 id="終わりに"><a href="#終わりに" class="headerlink" title="終わりに"></a>終わりに</h1><p>エンジニアで自分でも使えるようなものを作るのは結構楽しいですね。機能面も今後たくさん追加する予定です。お楽しみに。</p>
+<p>freee大阪開発拠点も絶賛<a href="https://www.wantedly.com/projects/108416?ql=gaJpZM4AVxBO" target="_blank" rel="noopener">メンバー募集中</a>ですので、興味ある方はぜひ！</p>
+<p>明日はプロダクト開発基盤チームに所属するcindyさんです！ご期待ください〜</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>著者： </strong>Ziyang Liao</li>
+  <li class="post-copyright-link">
+    <strong>記事へのリンク：</strong>
+    
+    <a href="https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/" title="人事労務freeeとSlackを連携させるためにやったこと">https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>著作権表示： </strong>このブログ内のすべての記事は、特別な記載がない限り <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> の下のライセンスで保護されています。</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/freee/" rel="tag"># freee</a>
+          
+            <a href="/tags/slack/" rel="tag"># slack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/19/Average-of-Levels-in-Binary-Tree/" rel="next" title="Average of Levels in Binary Tree">
+                <i class="fa fa-chevron-left"></i> Average of Levels in Binary Tree
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            見出し
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            概要
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.png" alt="Ziyang Liao">
+            
+              <p class="site-author-name" itemprop="name">Ziyang Liao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">ポスト</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">タグ</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/liaoziyang" title="GitHub &rarr; https://github.com/liaoziyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:liaoziyang0405@gmail.com" title="E-Mail &rarr; mailto:liaoziyang0405@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/liaoziyang288" title="Weibo &rarr; https://weibo.com/liaoziyang288" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/liaoziyang" title="Twitter &rarr; https://twitter.com/liaoziyang" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#今回作ったもの"><span class="nav-number">1.</span> <span class="nav-text">今回作ったもの</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#開発環境の構築"><span class="nav-number">2.</span> <span class="nav-text">開発環境の構築</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#外部に公開するためのSlack-Appを作る手順"><span class="nav-number">3.</span> <span class="nav-text">外部に公開するためのSlack Appを作る手順</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Slack-App設定画面の設定"><span class="nav-number">3.1.</span> <span class="nav-text">Slack App設定画面の設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAuth認証"><span class="nav-number">3.2.</span> <span class="nav-text">OAuth認証</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#勤怠打刻コマンドを作る"><span class="nav-number">4.</span> <span class="nav-text">勤怠打刻コマンドを作る</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初期設定"><span class="nav-number">4.1.</span> <span class="nav-text">初期設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打刻メッセージを返す"><span class="nav-number">4.2.</span> <span class="nav-text">打刻メッセージを返す</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打刻ボタンを押されたら打刻する"><span class="nav-number">4.3.</span> <span class="nav-text">打刻ボタンを押されたら打刻する</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Slack-Appを公開する"><span class="nav-number">5.</span> <span class="nav-text">Slack Appを公開する</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#終わりに"><span class="nav-number">6.</span> <span class="nav-text">終わりに</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ziyang Liao</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://liaoziyangs-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/';
+        this.page.identifier = '2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/';
+        this.page.title = '人事労務freeeとSlackを連携させるためにやったこと';
+        };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://liaoziyangs-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#もっと見る");
+  
+  </script>
+
+
+  
+
+  
+
+</body>
+</html>
