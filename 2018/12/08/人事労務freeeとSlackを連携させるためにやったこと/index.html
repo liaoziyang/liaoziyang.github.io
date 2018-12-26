@@ -115,13 +115,13 @@
 
 
 
-  <meta name="description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+  <meta name="description" content="この記事は裏freee developers Advent Calendar 2018の8日目&amp;amp;freee 19新卒 Advent Calendar 2018の24日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進してい">
 <meta name="keywords" content="freee,slack">
 <meta property="og:type" content="article">
 <meta property="og:title" content="人事労務freeeとSlackを連携させるためにやったこと">
 <meta property="og:url" content="https://liaoziyang.github.io/2018/12/08/人事労務freeeとSlackを連携させるためにやったこと/index.html">
 <meta property="og:site_name" content="liaoziyang&#39;s blog">
-<meta property="og:description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+<meta property="og:description" content="この記事は裏freee developers Advent Calendar 2018の8日目&amp;amp;freee 19新卒 Advent Calendar 2018の24日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進してい">
 <meta property="og:locale" content="ja">
 <meta property="og:image" content="https://liaoziyang.github.io/images/freee_slack.png">
 <meta property="og:image" content="https://liaoziyang.github.io/images/slack_auth_window.png">
@@ -130,10 +130,10 @@
 <meta property="og:image" content="https://liaoziyang.github.io/images/slack_dakoku_command.png">
 <meta property="og:image" content="https://liaoziyang.github.io/images/slack_app_approved.png">
 <meta property="og:image" content="https://liaoziyang.github.io/images/slack_app_live.png">
-<meta property="og:updated_time" content="2018-12-07T07:15:51.066Z">
+<meta property="og:updated_time" content="2018-12-24T13:00:22.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="人事労務freeeとSlackを連携させるためにやったこと">
-<meta name="twitter:description" content="この記事は裏freee developers Advent Calendar 2018の8日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当すること">
+<meta name="twitter:description" content="この記事は裏freee developers Advent Calendar 2018の8日目&amp;amp;freee 19新卒 Advent Calendar 2018の24日目です。今年の10月から新卒で入社した@liaoziyangと申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。 freeeではいろんなサービスとの連携を積極的に推進してい">
 <meta name="twitter:image" content="https://liaoziyang.github.io/images/freee_slack.png">
 
 
@@ -383,7 +383,7 @@
                 
                   <span class="post-meta-item-text">に編集されました</span>
                 
-                <time title="修正する：2018-12-07 16:15:51" itemprop="dateModified" datetime="2018-12-07T16:15:51+09:00">2018-12-07</time>
+                <time title="修正する：2018-12-24 22:00:22" itemprop="dateModified" datetime="2018-12-24T22:00:22+09:00">2018-12-24</time>
               
             
           </span>
@@ -427,7 +427,7 @@
       
 
       
-        <p>この記事は<a href="https://adventar.org/calendars/3140" target="_blank" rel="noopener">裏freee developers Advent Calendar 2018</a>の8日目です。今年の10月から新卒で入社した<a href="https://github.com/liaoziyang" target="_blank" rel="noopener">@liaoziyang</a>と申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。</p>
+        <p>この記事は<a href="https://adventar.org/calendars/3140" target="_blank" rel="noopener">裏freee developers Advent Calendar 2018</a>の8日目&amp;<a href="https://adventar.org/calendars/3661" target="_blank" rel="noopener">freee 19新卒 Advent Calendar 2018</a>の24日目です。今年の10月から新卒で入社した<a href="https://github.com/liaoziyang" target="_blank" rel="noopener">@liaoziyang</a>と申します。現在freee株式会社の大阪開発拠点で人事労務freeeの勤怠周り改善の開発を担当しています。</p>
 <p>freeeではいろんなサービスとの連携を積極的に推進していて、その一環として私が人事労務freeeとSlackの連携機能の開発を担当することになりました。今回は人事労務freeeとSlackを連携させるためにやったことをお話します。</p>
 <h1 id="今回作ったもの"><a href="#今回作ったもの" class="headerlink" title="今回作ったもの"></a>今回作ったもの</h1><p><img src="/images/freee_slack.png" alt="freee hr slack app"></p>
 <p>ざっくり機能を説明するとこんな感じです。</p>
@@ -484,7 +484,12 @@
 <p><img src="/images/slack_app_live.png" alt="slack app live"></p>
 <h1 id="終わりに"><a href="#終わりに" class="headerlink" title="終わりに"></a>終わりに</h1><p>エンジニアで自分でも使えるようなものを作るのは結構楽しいですね。機能面も今後たくさん追加する予定です。お楽しみに。</p>
 <p>freee大阪開発拠点も絶賛<a href="https://www.wantedly.com/projects/108416?ql=gaJpZM4AVxBO" target="_blank" rel="noopener">メンバー募集中</a>ですので、興味ある方はぜひ！</p>
-<p>明日はプロダクト開発基盤チームに所属するcindyさんです！ご期待ください〜</p>
+<p>明日は</p>
+<ul>
+<li>プロダクト開発基盤チームに所属するcindyさん(裏freee developers Advent Calendar 2018)</li>
+<li>19新卒の仲間宇都宮まゆさん(freee 19新卒 Advent Calendar 2018)</li>
+</ul>
+<p>です！ご期待ください〜</p>
 
       
     </div>
@@ -647,6 +652,8 @@
                 <div class="site-state-item site-state-tags">
                   
                     
+                    
+                      
                     
                       
                     
